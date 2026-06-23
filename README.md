@@ -10,7 +10,7 @@ Blob. It never parses a rosbag and has no ROS dependency.
 ```
 robot:  run_recorder -> analyze_run -> push_run --(HTTPS multipart)-->  /api/ingest
 cloud:  /api/ingest -> Vercel Blob (runs/<run_id>/*) + rebuild index.json
-        pages read Blob server-side, gated by VIEWER_PASSWORD (Basic auth)
+        pages read Blob server-side, gated by VIEWER_PASSWORD (login page)
 ```
 
 - `/` Runs table
@@ -29,8 +29,9 @@ cloud:  /api/ingest -> Vercel Blob (runs/<run_id>/*) + rebuild index.json
    - `INGEST_TOKEN` - long random string; must match the robot's
      `FRONTIER_BENCHMARK_INGEST_TOKEN`.
    - `VIEWER_PASSWORD` - shared password to view the dashboard.
-4. Deploy. The dashboard is at `https://<project>.vercel.app` (Basic auth: any
-   username + `VIEWER_PASSWORD`).
+4. Deploy. The dashboard is at `https://<project>.vercel.app`. First visit shows
+   a password-only login page (`VIEWER_PASSWORD`); it sets a cookie that keeps
+   you signed in.
 
 ## Point the robot at it
 
@@ -53,7 +54,7 @@ echo "INGEST_TOKEN=dev\nVIEWER_PASSWORD=\nBLOB_READ_WRITE_TOKEN=<from vercel>" >
 npm run dev   # http://localhost:3000
 ```
 
-Leaving `VIEWER_PASSWORD` empty disables the Basic-auth gate (local only).
+Leaving `VIEWER_PASSWORD` empty disables the login gate (local only).
 `BLOB_READ_WRITE_TOKEN` from a real Blob store is needed for reads/writes; use
 `vercel env pull` to fetch it.
 
@@ -64,5 +65,6 @@ Leaving `VIEWER_PASSWORD` empty disables the Basic-auth gate (local only).
   UI. For stricter isolation, move to private blobs or signed URLs.
 - Index is rebuilt by listing `runs/*/summary.json` on each ingest - fine for
   hundreds of runs. Switch to a DB (Postgres/KV) if it grows large.
-- Auth is intentionally minimal (one ingest token + one viewer password). Put
-  SSO / per-user auth in front if needed.
+- Auth is intentionally minimal: one ingest token + one shared viewer password
+  (password-only login page, cookie session). Put SSO / per-user auth in front
+  if needed.

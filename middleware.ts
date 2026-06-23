@@ -1,30 +1,28 @@
 import { NextRequest, NextResponse } from 'next/server';
 
-// Gate the whole dashboard behind a single shared password (HTTP Basic auth).
-// The ingest endpoint is intentionally excluded here because it uses its own
-// bearer-token check (robots cannot do interactive Basic auth).
-export function middleware(req: NextRequest): NextResponse {
+import { AUTH_COOKIE, sha256Hex } from '@/lib/auth';
+
+// Gate the whole dashboard behind a single shared password via a cookie set by
+// the /login page. The ingest endpoint is excluded (it uses its own bearer
+// token), and /login + /api/login must stay reachable while signed out.
+export async function middleware(req: NextRequest): Promise<NextResponse> {
   const expected = process.env.VIEWER_PASSWORD;
   // If no password is configured, do not lock anyone out (e.g. local dev).
   if (!expected) return NextResponse.next();
 
-  const auth = req.headers.get('authorization') || '';
-  if (auth.startsWith('Basic ')) {
-    try {
-      const decoded = atob(auth.slice(6));
-      const password = decoded.slice(decoded.indexOf(':') + 1);
-      if (password === expected) return NextResponse.next();
-    } catch {
-      /* fall through to challenge */
-    }
-  }
-  return new NextResponse('Authentication required', {
-    status: 401,
-    headers: { 'WWW-Authenticate': 'Basic realm="Frontier Benchmark"' },
-  });
+  const token = req.cookies.get(AUTH_COOKIE)?.value;
+  const want = await sha256Hex(expected);
+  if (token && token === want) return NextResponse.next();
+
+  const url = req.nextUrl.clone();
+  url.pathname = '/login';
+  url.search = '';
+  url.searchParams.set('next', req.nextUrl.pathname + req.nextUrl.search);
+  return NextResponse.redirect(url);
 }
 
 export const config = {
-  // Gate everything except the token-authed machine APIs and Next internals.
-  matcher: ['/((?!api/ingest|api/admin|_next/static|_next/image|favicon.ico).*)'],
+  // Gate everything except the token-authed ingest API, the login route/page,
+  // and Next internals.
+  matcher: ['/((?!api/ingest|api/login|login|_next/static|_next/image|favicon.ico).*)'],
 };

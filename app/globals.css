@@ -192,6 +192,9 @@ tbody tr {
 tr:hover td {
   background: rgba(255, 255, 255, 0.03);
 }
+.clickable-row {
+  cursor: pointer;
+}
 
 .cards {
   display: grid;

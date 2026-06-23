@@ -1,9 +1,9 @@
+import RunRow from '@/components/RunRow';
 import { getIndex } from '@/lib/store';
-import type { RunSummary } from '@/lib/types';
 
 export const dynamic = 'force-dynamic';
 
-const COLUMNS: { key: keyof RunSummary | string; label: string }[] = [
+const COLUMNS: { key: string; label: string }[] = [
   { key: 'run_id', label: 'run_id' },
   { key: 'env_label', label: 'env' },
   { key: 'git_sha', label: 'git' },
@@ -17,13 +17,6 @@ const COLUMNS: { key: keyof RunSummary | string; label: string }[] = [
   { key: 'preemptions', label: 'preempts' },
   { key: 'cpu_pct_mean', label: 'cpu%' },
 ];
-
-function fmt(v: unknown): string {
-  if (v === null || v === undefined) return '-';
-  if (typeof v === 'number') return Number.isInteger(v) ? String(v) : v.toFixed(3);
-  if (typeof v === 'boolean') return v ? 'yes' : 'no';
-  return String(v);
-}
 
 export default async function RunsPage() {
   const runs = await getIndex();
@@ -49,38 +42,7 @@ export default async function RunsPage() {
             </thead>
             <tbody>
               {runs.map((r) => (
-                <tr key={r.run_id}>
-                  <td>
-                    <a href={`/run/${encodeURIComponent(r.run_id)}`}>
-                      {/* eslint-disable-next-line @next/next/no-img-element */}
-                      <img
-                        src={`/api/asset?path=${encodeURIComponent(`runs/${r.run_id}/map.png`)}`}
-                        alt="map"
-                        loading="lazy"
-                        width={72}
-                        height={72}
-                        style={{
-                          width: 72,
-                          height: 72,
-                          objectFit: 'cover',
-                          borderRadius: 6,
-                          border: '1px solid var(--border)',
-                          display: 'block',
-                        }}
-                      />
-                    </a>
-                  </td>
-                  {COLUMNS.map((c) => (
-                    <td key={String(c.key)}>
-                      {c.key === 'run_id' ? (
-                        <a href={`/run/${encodeURIComponent(r.run_id)}`}>{r.run_id}</a>
-                      ) : (
-                        fmt(r[c.key as keyof RunSummary])
-                      )}
-                    </td>
-                  ))}
-                  <td className="muted">{r.notes || ''}</td>
-                </tr>
+                <RunRow key={r.run_id} run={r} columns={COLUMNS} />
               ))}
             </tbody>
           </table>

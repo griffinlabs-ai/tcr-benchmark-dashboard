@@ -27,17 +27,17 @@ export default function ParamStrip({
   const envs = Array.from(new Set(points.map((p) => p.env_label)));
   return (
     <div className="panel">
-      <div className="muted" style={{ marginBottom: 8 }}>
+      <div className="eyebrow">
         {metric} vs {param} (by environment)
       </div>
       <ResponsiveContainer width="100%" height={360}>
         <ScatterChart margin={{ top: 8, right: 16, bottom: 24, left: 8 }}>
-          <CartesianGrid stroke="#262b36" />
+          <CartesianGrid stroke="#23252c" />
           <XAxis
             type="category"
             dataKey="param_value"
             name={param}
-            stroke="#9aa3b2"
+            stroke="#9da2b3"
             tick={{ fontSize: 11 }}
             allowDuplicatedCategory={false}
           />
@@ -45,13 +45,13 @@ export default function ParamStrip({
             type="number"
             dataKey="metric_value"
             name={metric}
-            stroke="#9aa3b2"
+            stroke="#9da2b3"
             tick={{ fontSize: 11 }}
           />
           <ZAxis range={[80, 80]} />
           <Tooltip
             cursor={{ strokeDasharray: '3 3' }}
-            contentStyle={{ background: '#171a22', border: '1px solid #262b36' }}
+            contentStyle={{ background: '#101216', border: '1px solid #34373f', borderRadius: 8 }}
           />
           {envs.map((env, i) => (
             <Scatter

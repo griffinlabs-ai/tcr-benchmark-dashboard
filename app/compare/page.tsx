@@ -61,7 +61,7 @@ export default async function ComparePage({
                 </option>
               ))}
             </select>
-            <button type="submit" style={{ marginTop: 12 }}>
+            <button type="submit" className="btn btn-pill" style={{ marginTop: 12 }}>
               Compare
             </button>
           </div>

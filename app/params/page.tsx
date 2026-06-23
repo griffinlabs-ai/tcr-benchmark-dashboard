@@ -56,7 +56,7 @@ export default async function ParamsPage({
                 </option>
               ))}
             </select>
-            <button type="submit" style={{ marginTop: 12 }}>
+            <button type="submit" className="btn btn-pill" style={{ marginTop: 12 }}>
               Update
             </button>
           </div>

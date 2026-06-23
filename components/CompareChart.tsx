@@ -20,25 +20,23 @@ const COLORS = ['#5b9dff', '#ff8f5b', '#5bd6a0', '#d65b9d', '#d6c75b', '#9d5bd6'
 export default function CompareChart({ series }: { series: CompareSeries[] }) {
   return (
     <div className="panel">
-      <div className="muted" style={{ marginBottom: 8 }}>
-        Coverage vs distance (overlay)
-      </div>
+      <div className="eyebrow">Coverage vs distance (overlay)</div>
       <ResponsiveContainer width="100%" height={360}>
         <LineChart margin={{ top: 8, right: 16, bottom: 16, left: 8 }}>
-          <CartesianGrid stroke="#262b36" />
+          <CartesianGrid stroke="#23252c" />
           <XAxis
             type="number"
             dataKey="distance_m"
-            stroke="#9aa3b2"
+            stroke="#9da2b3"
             tick={{ fontSize: 11 }}
-            label={{ value: 'distance (m)', position: 'insideBottom', offset: -4, fill: '#9aa3b2' }}
+            label={{ value: 'distance (m)', position: 'insideBottom', offset: -4, fill: '#9da2b3' }}
           />
           <YAxis
-            stroke="#9aa3b2"
+            stroke="#9da2b3"
             tick={{ fontSize: 11 }}
-            label={{ value: 'known area (m^2)', angle: -90, position: 'insideLeft', fill: '#9aa3b2' }}
+            label={{ value: 'known area (m^2)', angle: -90, position: 'insideLeft', fill: '#9da2b3' }}
           />
-          <Tooltip contentStyle={{ background: '#171a22', border: '1px solid #262b36' }} />
+          <Tooltip contentStyle={{ background: '#101216', border: '1px solid #34373f', borderRadius: 8 }} />
           {series.map((s, i) => (
             <Line
               key={s.run_id}

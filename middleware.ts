@@ -25,6 +25,6 @@ export function middleware(req: NextRequest): NextResponse {
 }
 
 export const config = {
-  // Gate everything except the token-authed ingest API and Next internals.
-  matcher: ['/((?!api/ingest|_next/static|_next/image|favicon.ico).*)'],
+  // Gate everything except the token-authed machine APIs and Next internals.
+  matcher: ['/((?!api/ingest|api/admin|_next/static|_next/image|favicon.ico).*)'],
 };

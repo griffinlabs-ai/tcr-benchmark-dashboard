@@ -40,6 +40,7 @@ export default async function RunsPage() {
           <table>
             <thead>
               <tr>
+                <th>map</th>
                 {COLUMNS.map((c) => (
                   <th key={String(c.key)}>{c.label}</th>
                 ))}
@@ -49,6 +50,26 @@ export default async function RunsPage() {
             <tbody>
               {runs.map((r) => (
                 <tr key={r.run_id}>
+                  <td>
+                    <a href={`/run/${encodeURIComponent(r.run_id)}`}>
+                      {/* eslint-disable-next-line @next/next/no-img-element */}
+                      <img
+                        src={`/api/asset?path=${encodeURIComponent(`runs/${r.run_id}/map.png`)}`}
+                        alt="map"
+                        loading="lazy"
+                        width={72}
+                        height={72}
+                        style={{
+                          width: 72,
+                          height: 72,
+                          objectFit: 'cover',
+                          borderRadius: 6,
+                          border: '1px solid var(--border)',
+                          display: 'block',
+                        }}
+                      />
+                    </a>
+                  </td>
                   {COLUMNS.map((c) => (
                     <td key={String(c.key)}>
                       {c.key === 'run_id' ? (

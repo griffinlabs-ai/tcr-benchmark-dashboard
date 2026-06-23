@@ -4,7 +4,7 @@
 //
 // Reads go through the server (never expose blob URLs to the browser except via
 // the gated /api/asset proxy), keeping everything behind the viewer password.
-import { list, put } from '@vercel/blob';
+import { del, list, put } from '@vercel/blob';
 
 import type { RunSummary } from './types';
 
@@ -89,6 +89,19 @@ export async function rebuildIndex(): Promise<number> {
   summaries.sort((a, b) => (b.run_id || '').localeCompare(a.run_id || ''));
   await putArtifact(INDEX_PATH, JSON.stringify(summaries), 'application/json');
   return summaries.length;
+}
+
+// Delete every run artifact and the index (full reset). Returns deleted count.
+export async function resetStore(): Promise<number> {
+  const urls: string[] = [];
+  let cursor: string | undefined;
+  do {
+    const page = await list({ cursor, limit: 1000 });
+    for (const blob of page.blobs) urls.push(blob.url);
+    cursor = page.hasMore ? page.cursor : undefined;
+  } while (cursor);
+  if (urls.length > 0) await del(urls);
+  return urls.length;
 }
 
 // ---- Per-run reads ------------------------------------------------------
